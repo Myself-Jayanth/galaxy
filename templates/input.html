@@ -1,16 +1,64 @@
-<!-- templates/input.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Galaxy Image</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
 </head>
-<body class="center-screen">
-    <h1>Upload Galaxy Image</h1>
-    <form action="/predict" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".png, .jpg, .jpeg" required>
-        <button type="submit">Classify</button>
-    </form>
+<body>
+    <div class="center-screen">
+        <h1>Upload Galaxy Image</h1>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 500px; line-height: 1.5;">
+            Select a galaxy image to analyze its morphological classification
+        </p>
+        
+        <form id="classifyForm" action="/predict" method="post" enctype="multipart/form-data">
+            <div class="file-input-container">
+                <input type="file" name="file" id="fileInput" accept=".png, .jpg, .jpeg" required>
+                <label for="fileInput" class="file-input-label">
+                    📁 Choose Galaxy Image
+                </label>
+            </div>
+            <div id="fileName" style="margin: 15px 0; font-size: 1rem; color: #bb86fc;"></div>
+            <button type="submit" id="classifyBtn">🔬 Classify Galaxy</button>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="galaxy-spinner">
+                <div class="galaxy-ring"></div>
+                <div class="galaxy-ring"></div>
+                <div class="galaxy-ring"></div>
+                <div class="galaxy-ring"></div>
+            </div>
+            <div class="loading-text">Analyzing Galaxy...</div>
+            <div class="loading-subtext">AI is processing your cosmic image</div>
+        </div>
+    </div>
+
+    <script>
+        // Show selected file name
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            const fileNameDiv = document.getElementById('fileName');
+            if (fileName) {
+                fileNameDiv.textContent = `Selected: ${fileName}`;
+                fileNameDiv.style.color = '#64ffda';
+            } else {
+                fileNameDiv.textContent = '';
+            }
+        });
+
+        // Show loading animation on form submit
+        document.getElementById('classifyForm').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length > 0) {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            }
+        });
+    </script>
 </body>
 </html>
