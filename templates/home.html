@@ -1,0 +1,15 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SDSS Galaxy Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+</head>
+<body class="center-screen">
+    <h1>Galaxy Classification</h1>
+    <form action="/input">
+        <button type="submit">Start Classification</button>
+    </form>
+</body>
+</html>

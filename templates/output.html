@@ -1,0 +1,16 @@
+<!-- templates/output.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Galaxy Classification Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+</head>
+<body class="center-screen">
+    <h1>Prediction Result</h1>
+    <img src="{{ image_path }}" alt="Uploaded Image" class="preview">
+    <h2>Predicted Class: {{ label }}</h2>
+    <p>Confidence: {{ confidence }}%</p>
+    <a href="/">Back to Home</a>
+</body>
+</html>
