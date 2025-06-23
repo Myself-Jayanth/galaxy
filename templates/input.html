@@ -52,11 +52,20 @@
             }
         });
 
-        // Show loading animation on form submit
+        // Show loading animation for 3 seconds before form submission
         document.getElementById('classifyForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent immediate form submission
+            
             const fileInput = document.getElementById('fileInput');
             if (fileInput.files.length > 0) {
+                // Show loading overlay
                 document.getElementById('loadingOverlay').style.display = 'flex';
+                
+                // Wait 3 seconds then submit the form
+                setTimeout(() => {
+                    // Actually submit the form after 3 seconds
+                    e.target.submit();
+                }, 3000);
             }
         });
     </script>
