@@ -14,14 +14,22 @@
         </p>
         
         <form id="classifyForm" action="/predict" method="post" enctype="multipart/form-data">
-            <div class="file-input-container">
+            <!-- Drag and Drop Upload Box -->
+            <div id="uploadBox" class="upload-box">
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        <div class="upload-main-text">Drop your galaxy image here</div>
+                        <div class="upload-sub-text">or click to browse</div>
+                    </div>
+                </div>
                 <input type="file" name="file" id="fileInput" accept=".png, .jpg, .jpeg" required>
-                <label for="fileInput" class="file-input-label">
-                    📁 Choose Galaxy Image
-                </label>
             </div>
+            
             <div id="fileName" style="margin: 15px 0; font-size: 1rem; color: #bb86fc;"></div>
-            <button type="submit" id="classifyBtn">🔬 Classify Galaxy</button>
+            
+            <!-- Smaller Upload Button Below -->
+            <button type="submit" id="classifyBtn" class="classify-btn">🔬 Classify Galaxy</button>
         </form>
     </div>
 
@@ -40,23 +48,84 @@
     </div>
 
     <script>
-        // Show selected file name
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name;
-            const fileNameDiv = document.getElementById('fileName');
-            if (fileName) {
-                fileNameDiv.textContent = `Selected: ${fileName}`;
-                fileNameDiv.style.color = '#64ffda';
-            } else {
-                fileNameDiv.textContent = '';
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        // Click to upload
+        uploadBox.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop functionality
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('drag-over');
+        });
+
+        uploadBox.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('drag-over');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileName(files[0].name);
+                updateUploadBox(files[0]);
             }
         });
+
+        // Show selected file name and preview
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                updateFileName(file.name);
+                updateUploadBox(file);
+            } else {
+                resetUploadBox();
+            }
+        });
+
+        function updateFileName(name) {
+            fileName.textContent = `Selected: ${name}`;
+            fileName.style.color = '#64ffda';
+        }
+
+        function updateUploadBox(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadBox.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview" class="upload-preview">
+                    <div class="upload-overlay">
+                        <div class="upload-change-text">Click to change image</div>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUploadBox() {
+            uploadBox.innerHTML = `
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        <div class="upload-main-text">Drop your galaxy image here</div>
+                        <div class="upload-sub-text">or click to browse</div>
+                    </div>
+                </div>
+            `;
+            fileName.textContent = '';
+        }
 
         // Show loading animation for 3 seconds before form submission
         document.getElementById('classifyForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent immediate form submission
             
-            const fileInput = document.getElementById('fileInput');
             if (fileInput.files.length > 0) {
                 // Show loading overlay
                 document.getElementById('loadingOverlay').style.display = 'flex';
